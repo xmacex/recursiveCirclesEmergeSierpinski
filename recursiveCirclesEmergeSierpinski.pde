@@ -1,7 +1,14 @@
 // by Mace, as teached by Daniel Shiffman author of Nature of
-// Code, on his video at https://vimeo.com/channels/543239 
+// Code, on his video at https://vimeo.com/channels/543239
+
+import processing.serial.*;
+
+Serial myPort;
+int fractalSize = 250;
 
 void setup() {
+  String portName = Serial.list()[0];
+  myPort = new Serial(this, portName, 9600);
   size(500, 500);
   background(0);
   // noFill();
@@ -9,11 +16,14 @@ void setup() {
   stroke(255);
   strokeWeight(0.01);
   smooth();
-  noLoop();
 }
 
 void draw() {
-  drawCircle(width/2, height/2, 250);
+  if (myPort.available() > 0) {
+    fractalSize = myPort.read() * 10;
+    println("Received data " + fractalSize);
+  }
+  drawCircle(width/2, height/2, fractalSize);
 }
 
 void drawCircle(float x, float y, float d) {
